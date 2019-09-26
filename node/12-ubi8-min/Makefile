@@ -12,9 +12,11 @@
 #    Contributors to this project, hereby assign copyright in this code to the project,
 #    to be licensed under the same terms as the rest of the code.
 #
+
+# the name of the container registry repository
 REPO_NAME=quay.io/gatblau
-IMG_NAME=openjdk
-IMG_TAG = 13-j9-ubi8-min
+IMG_NAME=node
+IMG_TAG = 12-ubi8-min
 
 # get old images that are left without a name from new image builds (i.e. dangling images)
 DANGLING_IMS = $(shell docker images -f dangling=true -q)
