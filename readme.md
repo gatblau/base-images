@@ -1,4 +1,4 @@
-# OCI Images
+# Base Images
 
 [Open Container Initiative](https://www.opencontainers.org/about) compliant application base images.
 
