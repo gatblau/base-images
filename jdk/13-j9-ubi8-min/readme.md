@@ -13,7 +13,7 @@ It is based on:
 
 ```dockerfile
 # Dockerfile
-FROM quay.io/gatblau/openjdk:13-j9jdk-ubi8-min
+FROM quay.io/gatblau/openjdk:13-j9-ubi8-min
 ...
 
 ```
