@@ -1,6 +1,6 @@
 # Image for Containerised Node Applications
 
-This image is for running containerised nodejs applications.
+This is an OCI v1 image for running containerised nodejs applications.
 
 It is based on:
 
@@ -10,9 +10,28 @@ It is based on:
 
 ## How to use
 
-```dockerfile
-# Dockerfile
-FROM quay.io/gatblau/node:12-ubi8-min
-...
+### Buildah
+
+```bash
+# From Quay
+openSDK=$(buildah from docker://quay.io/gatblau/node:12-ubi8-min)
+
+# From Docker Hub
+openSDK=$(buildah from docker://docker.io/gatblau/node:12-ubi8-min)
 ```
 
+### Dockerfile
+
+```bash
+# From Quay.io
+FROM quay.io/gatblau/node:12-ubi8-min
+
+# From Docker hub
+FROM docker.io/gatblau/node:12-ubi8-min
+```
+
+**NOTE**:
+
+This is not a supported image.
+
+If you need Enterprise supported images you should use [Red Hat Runtimes](https://www.redhat.com/en/products/runtimes).

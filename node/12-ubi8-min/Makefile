@@ -14,19 +14,17 @@
 #
 
 # the name of the container registry repository
-REPO_NAME=quay.io/gatblau
+REPO_NAME=gatblau
 IMG_NAME=node
 IMG_TAG = 12-ubi8-min
 
-# get old images that are left without a name from new image builds (i.e. dangling images)
-DANGLING_IMS = $(shell docker images -f dangling=true -q)
-
 image:
-	docker build -t $(REPO_NAME)/$(IMG_NAME):$(IMG_TAG) .
+	sudo bash build.sh $(REPO_NAME) $(IMG_NAME) $(IMG_TAG)
 
 push:
-	docker push $(REPO_NAME)/$(IMG_NAME):$(IMG_TAG)
+	sudo podman login docker.io -u gatblau
+	sudo podman push docker.io/$(REPO_NAME)/$(IMG_NAME):$(IMG_TAG)
 
-# deletes dangling images
-clean:
-	docker rmi $(DANGLING_IMS) -f
+push-quay:
+	sudo podman login quay.io -u gatblau
+	sudo podman push quay.io/$(REPO_NAME)/$(IMG_NAME):$(IMG_TAG)
