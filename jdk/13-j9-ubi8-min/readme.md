@@ -1,6 +1,6 @@
 # Image for Containerised Java Applications
 
-This image is for running performant containerised java applications.
+This is an OCI v1 image for running performant containerised java applications.
 
 It is based on:
 
@@ -8,13 +8,28 @@ It is based on:
 - [Eclipse OpenJ9 JVM](https://www.eclipse.org/openj9/): *"low memory footprint, fast startup time, high application throughput, smoother ramp up in the cloud"*
 - [OpenJDK](https://openjdk.java.net/)
 
-
 ## How to use
 
-```dockerfile
-# Dockerfile
-FROM quay.io/gatblau/openjdk:13-j9-ubi8-min
-...
+### Buildah
 
+```bash
+# From Quay
+openSDK=$(buildah from docker://quay.io/gatblau/openjdk:13-j9-ubi8-min)
+
+# From Docker Hub
+openSDK=$(buildah from docker://docker.io/gatblau/openjdk:13-j9-ubi8-min)
 ```
 
+### Dockerfile
+
+```bash
+# From Quay.io
+FROM quay.io/gatblau/openjdk:13-j9-ubi8-min
+
+# From Docker hub
+FROM docker.io/gatblau/openjdk:13-j9-ubi8-min
+```
+
+**NOTE**: 
+This is not a supported image.
+If you need Enterprise supported images you should use [Red Hat Runtimes](https://www.redhat.com/en/products/runtimes).

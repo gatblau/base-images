@@ -1,5 +1,5 @@
 #
-#    base-images - Copyright (c) 2018-2019 by www.gatblau.org
+#    base-images - Copyright (c) 2019 by www.gatblau.org
 #
 #    Licensed under the Apache License, Version 2.0 (the "License");
 #    you may not use this file except in compliance with the License.
@@ -12,19 +12,17 @@
 #    Contributors to this project, hereby assign copyright in this code to the project,
 #    to be licensed under the same terms as the rest of the code.
 #
-REPO_NAME=quay.io/gatblau
+REPO_NAME=gatblau
 IMG_NAME=openjdk
 IMG_TAG = 13-j9-ubi8-min
 
-# get old images that are left without a name from new image builds (i.e. dangling images)
-DANGLING_IMS = $(shell docker images -f dangling=true -q)
-
 image:
-	docker build -t $(REPO_NAME)/$(IMG_NAME):$(IMG_TAG) .
+	sudo bash build.sh $(REPO_NAME) $(IMG_NAME) $(IMG_TAG)
 
 push:
-	docker push $(REPO_NAME)/$(IMG_NAME):$(IMG_TAG)
+	sudo podman login docker.io -u gatblau
+	sudo podman push docker.io/$(REPO_NAME)/$(IMG_NAME):$(IMG_TAG)
 
-# deletes dangling images
-clean:
-	docker rmi $(DANGLING_IMS) -f
+push-quay:
+	sudo podman login quay.io -u gatblau
+	sudo podman push quay.io/$(REPO_NAME)/$(IMG_NAME):$(IMG_TAG)
