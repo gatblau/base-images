@@ -14,10 +14,10 @@ It is based on:
 
 ```bash
 # From Quay
-openSDK=$(buildah from docker://quay.io/gatblau/node:12-ubi8-min)
+nodejs=$(buildah from docker://quay.io/gatblau/node:12-ubi8-min)
 
 # From Docker Hub
-openSDK=$(buildah from docker://docker.io/gatblau/node:12-ubi8-min)
+nodejs=$(buildah from docker://docker.io/gatblau/node:12-ubi8-min)
 ```
 
 ### Dockerfile
