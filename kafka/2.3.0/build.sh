@@ -13,7 +13,7 @@
 # Contributors to this project, hereby assign copyright in this code to the project,
 # to be licensed under the same terms as the rest of the code.
 #
-# Builds the OpenJDK 13 - OpenJ9 JVM container image using buildah.
+# Builds the OpenJDK 13 - OpenJ9 JVM OCI image using buildah.
 # Run in CentOS 8 / RHEL 8
 #
 # NOTE:
@@ -23,10 +23,9 @@
 # check the input variables
 if [ $# -lt 4 ]; then
     echo "Parameters provided are not correct. See usage below."
-    echo "Usage is: sh build.sh [REPO_NAME] [IMG_NAME] [IMG_TAG] [IMG_FORMAT] - e.g. sh build.sh gatblau opensdk 13-j9-ubi8-min oci"
+    echo "Usage is: sh build.sh [REPO_NAME] [IMG_NAME] [IMG_TAG] [IMG_FORMAT] - e.g. sh build.sh gatblau kafka 2.3.0 oci"
     exit 1
 fi
-
 # input variables
 REPO_NAME=$1
 IMG_NAME=$2
@@ -34,59 +33,63 @@ IMG_TAG=$3
 IMG_FORMAT=$4
 
 LANG=en_GB.UTF-8
-JAVA_HOME=/usr/java/openjdk-13
-PATH=$JAVA_HOME/bin:$PATH
-JAVA_VERSION=13
-JAVA_JVM_VERSION=openj9-0.16.0
-JAVA_URL=https://github.com/AdoptOpenJDK/openjdk13-binaries/releases/download/jdk-13%2B33_openj9-0.16.0/OpenJDK13U-jre_x64_linux_openj9_13_33_openj9-0.16.0.tar.gz
-JAVA_SHA256=2ee59be5062a81daa7be85be161cab6b245f9a2e2cbd4769ae9edefaac41e31d
-# UseContainerSupport: prevent the JVM adjusting the maximum heap size when running in a container
-# IdleTuningGcOnIdle: when the JVM state is set to idle, it releases free memory pages in the object heap
-#   without resizing the Java™ heap and attempts to compact the heap after the garbage collection cycle if
-#   certain heuristics are triggered. The pages are reclaimed by the operating system, which reduces the
-#   physical memory footprint of the JVM.
-JAVA_TOOL_OPTIONS="-XX:+UseContainerSupport -XX:+IdleTuningGcOnIdle"
+KAFKA_VERSION=2.12-2.3.0
+KAFKA_URL=http://apache.mirror.anlx.net/kafka/2.3.0/kafka_2.12-2.3.0.tgz
+KAFKA_SHA256=d86f5121a9f0c44477ae6b6f235daecc3f04ecb7bf98596fd91f402336eee3e7
+KAFKA_HOME=/opt/kafka
 
 # create a temporary container to download the jdk
 builder=$(buildah from docker://alpine)
 
 # copy the install jdk script in the container
-buildah copy $builder downloadJDK.sh /downloadJDK.sh
+buildah copy $builder downloadKafka.sh /downloadKafka.sh
 
 # install download the jdk
-buildah run $builder sh downloadJDK.sh $JAVA_URL $JAVA_SHA256 $JAVA_HOME
+buildah run $builder sh downloadKafka.sh $KAFKA_URL $KAFKA_SHA256 $KAFKA_HOME
 
 # mount the file system of the container
 builder_mnt=$(buildah mount $builder)
 
 # create the openjdk working container
-target=$(buildah from docker://registry.access.redhat.com/ubi8/ubi-minimal)
+target=$(buildah from docker://quay.io/gatblau/openjdk:13-j9-ubi8-min)
 
 # set labels
 buildah config --label maintainer="GATBLAU <admin@gatblau.org>" $target
-buildah config --label author="gatblau.org>" $target
+buildah config --label author="gatblau.org" $target
 
 # set environment variables
 buildah config --env LANG=$LANG $target
-buildah config --env JAVA_HOME="$JAVA_HOME" $target
-buildah config --env PATH="$JAVA_HOME/bin":$PATH $target
-buildah config --env JAVA_VERSION="$JAVA_VERSION" $target
-buildah config --env JAVA_JVM_VERSION="$JAVA_JVM_VERSION" $target
-buildah config --env JAVA_TOOL_OPTIONS="$JAVA_TOOL_OPTIONS" $target
+buildah config --env KAFKA_HOME=$KAFKA_HOME $target
+buildah config --env PATH=$KAFKA_HOME/bin:$PATH $target
+buildah config --env KAFKA_VERSION=$KAFKA_VERSION $target
 
-# copy the jdk files
-buildah copy $target $builder_mnt$JAVA_HOME $JAVA_HOME
+# copy the kafka files
+buildah copy $target $builder_mnt$KAFKA_HOME $KAFKA_HOME
 
-# copy the jdk configuration script
-buildah copy $target configureJDK.sh /configureJDK.sh
+# switch to the root user
+buildah config --user root $target
 
-# run the jdk configuration script
-buildah run $target sh configureJDK.sh $JAVA_HOME
+# install netcat
+buildah run $target rpm -vhU https://nmap.org/dist/ncat-7.80-1.x86_64.rpm
 
-# remove the configuration script
-buildah run $target rm /configureJDK.sh
+# copy scripts
+buildah copy $target start.sh /start.sh
+buildah copy $target server.properties $KAFKA_HOME/config/server.properties
 
-# commit the openjdk working container to an image in the local registry
+# make user 20 own the kafka & /run directories
+buildah run $target chown -R 20 $KAFKA_HOME
+buildah run $target chown -R 20 /run
+
+# set the user the container processes run under
+buildah config --user 20 $target
+
+# expose the required ports
+buildah config --port 9092 $target # kafka port
+buildah config --port 2181 $target # zookeeper port
+
+buildah config --cmd "sh start.sh" $target
+
+# commit the container to an image in the local registry
 buildah commit --format $IMG_FORMAT $target $REPO_NAME/$IMG_NAME:$IMG_TAG
 
 # tag the local image for docker.io

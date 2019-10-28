@@ -13,8 +13,8 @@
 #    to be licensed under the same terms as the rest of the code.
 #
 REPO_NAME=gatblau
-IMG_NAME=openjdk
-IMG_TAG = 13-j9-ubi8-min
+IMG_NAME=kafka
+IMG_TAG = 2.3.0
 
 # builds an docker v2 schema v2 image
 image:
@@ -24,10 +24,12 @@ image:
 oci-image:
 	sudo bash build.sh $(REPO_NAME) $(IMG_NAME) $(IMG_TAG) oci
 
+# push image to docker.io
 push:
 	sudo podman login docker.io -u gatblau
 	sudo podman push docker.io/$(REPO_NAME)/$(IMG_NAME):$(IMG_TAG)
 
+# push image to quay.io
 push-quay:
 	sudo podman login quay.io -u gatblau
 	sudo podman push quay.io/$(REPO_NAME)/$(IMG_NAME):$(IMG_TAG)
