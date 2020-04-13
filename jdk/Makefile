@@ -1,5 +1,5 @@
 #
-#    base-images - Copyright (c) 2019 by www.gatblau.org
+#    base-images - Copyright (c) 2019-2020 by www.gatblau.org
 #
 #    Licensed under the Apache License, Version 2.0 (the "License");
 #    you may not use this file except in compliance with the License.
@@ -14,20 +14,37 @@
 #
 REPO_NAME=gatblau
 IMG_NAME=openjdk
-IMG_TAG = 13-j9-ubi8-min
+IMG_TAG_13 = 13-j9-ubi8-min
+IMG_TAG_14 = 14-j9-ubi8-min
 
 # builds an docker v2 schema v2 image
-image:
-	sudo bash build.sh $(REPO_NAME) $(IMG_NAME) $(IMG_TAG) docker
+image-13:
+	sudo bash build_13.sh $(REPO_NAME) $(IMG_NAME) $(IMG_TAG_13) docker
 
 # builds an OCI v1 image
-oci-image:
-	sudo bash build.sh $(REPO_NAME) $(IMG_NAME) $(IMG_TAG) oci
+oci-image-13:
+	sudo bash build_13.sh $(REPO_NAME) $(IMG_NAME) $(IMG_TAG_13) oci
 
-push:
+push-13:
 	sudo podman login docker.io -u gatblau
-	sudo podman push docker.io/$(REPO_NAME)/$(IMG_NAME):$(IMG_TAG)
+	sudo podman push docker.io/$(REPO_NAME)/$(IMG_NAME):$(IMG_TAG_13)
 
-push-quay:
+push-quay-13:
 	sudo podman login quay.io -u gatblau
-	sudo podman push quay.io/$(REPO_NAME)/$(IMG_NAME):$(IMG_TAG)
+	sudo podman push quay.io/$(REPO_NAME)/$(IMG_NAME):$(IMG_TAG_13)
+
+# builds an docker v2 schema v2 image
+image-14:
+	sudo bash build_14.sh $(REPO_NAME) $(IMG_NAME) $(IMG_TAG_14) docker
+
+# builds an OCI v1 image
+oci-image-14:
+	sudo bash build_14.sh $(REPO_NAME) $(IMG_NAME) $(IMG_TAG_14) oci
+
+push-14:
+	sudo podman login docker.io -u gatblau
+	sudo podman push docker.io/$(REPO_NAME)/$(IMG_NAME):$(IMG_TAG_14)
+
+push-quay-14:
+	sudo podman login quay.io -u gatblau
+	sudo podman push quay.io/$(REPO_NAME)/$(IMG_NAME):$(IMG_TAG_14)

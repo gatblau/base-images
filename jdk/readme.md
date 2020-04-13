@@ -30,6 +30,13 @@ FROM quay.io/gatblau/openjdk:13-j9-ubi8-min
 FROM docker.io/gatblau/openjdk:13-j9-ubi8-min
 ```
 
-**NOTE**: 
+**NOTE**:
 This is not a supported image.
 If you need Enterprise supported images you should use [Red Hat Runtimes](https://www.redhat.com/en/products/runtimes).
+
+### Tags and Versions
+
+| Tag | OpenJ9 | JDK | OS |
+|---|---|---|---|
+| 13-j9-ubi8-min | openj9-0.16.0 | JDK_13_33 | UBI 8 |
+| 14-j9-ubi8-min | openj9-0.19.0 | JDK_14_36 | UBI 8 |
