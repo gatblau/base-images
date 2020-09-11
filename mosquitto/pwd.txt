@@ -1,0 +1,1 @@
+mosquitto:${PASSWORD:$6$lc4PWImhQkzrBscZ$TPmvU3H103L/fa+ErD6rzrpSCv8sMjosjani1hgz7t0maTfmGZoc4dx/GYacyOZPwGNiEMTeBZzyVKaQ74rhUg==}
