@@ -37,9 +37,10 @@ LANG=en_GB.UTF-8
 JAVA_HOME=/usr/java/openjdk-14
 PATH=$JAVA_HOME/bin:$PATH
 JAVA_VERSION=14
-JAVA_JVM_VERSION=openj9-0.19.0
-JAVA_URL=https://github.com/AdoptOpenJDK/openjdk14-binaries/releases/download/jdk-14%2B36.1_openj9-0.19.0/OpenJDK14U-jdk_x64_linux_openj9_14_36_openj9-0.19.0.tar.gz
-JAVA_SHA256=106b72d565be98834ead5fea9555bd646d488a86fc4ae4dd294a38e97bf77509
+JAVA_JVM_VERSION=openj9-0.21.0
+JAVA_URL=https://github.com/AdoptOpenJDK/openjdk14-binaries/releases/download/jdk-14.0.2%2B12_openj9-0.21.0/OpenJDK14U-jre_x64_linux_openj9_14.0.2_12_openj9-0.21.0.tar.gz
+JAVA_SHA256=3a137146a7b0bd8b029e72beb37c5fbb09dcfb9e33a10125076fff1555227cfd
+
 # UseContainerSupport: prevent the JVM adjusting the maximum heap size when running in a container
 # IdleTuningGcOnIdle: when the JVM state is set to idle, it releases free memory pages in the object heap
 #   without resizing the Java™ heap and attempts to compact the heap after the garbage collection cycle if
@@ -73,6 +74,11 @@ buildah config --env PATH="$JAVA_HOME/bin":$PATH $target
 buildah config --env JAVA_VERSION="$JAVA_VERSION" $target
 buildah config --env JAVA_JVM_VERSION="$JAVA_JVM_VERSION" $target
 buildah config --env JAVA_TOOL_OPTIONS="$JAVA_TOOL_OPTIONS" $target
+
+# update the base image
+buildah run $target microdnf update --disablerepo=* --enablerepo=ubi-8-appstream --enablerepo=ubi-8-baseos -y
+buildah run $target rm -rf /var/cache/yum
+buildah run $target microdnf clean all
 
 # copy the jdk files
 buildah copy $target $builder_mnt$JAVA_HOME $JAVA_HOME
