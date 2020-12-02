@@ -32,9 +32,13 @@ IMG_NAME=$2
 IMG_TAG=$3
 
 LANG=en_GB.UTF-8
-NODE_HOME=/usr/node/12.11.0
-NODE_URL=https://nodejs.org/dist/v12.11.0/node-v12.11.0-linux-x64.tar.xz
-NODE_VERSION=12.11.0
+NODE_HOME=/usr/node/14.15.1
+#NODE_URL=https://nodejs.org/dist/v12.11.0/node-v12.11.0-linux-x64.tar.xz
+NODE_URL=https://nodejs.org/dist/v14.15.1/node-v14.15.1-linux-x64.tar.xz
+NODE_VERSION=14.15.1
+
+# pull the latest base image
+buildah pull registry.access.redhat.com/ubi8/ubi-minimal
 
 # create a temporary container to download nodejs
 builder=$(buildah from docker://alpine)
