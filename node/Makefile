@@ -16,7 +16,7 @@
 # the name of the container registry repository
 REPO_NAME=gatblau
 IMG_NAME=node
-IMG_TAG = 12-ubi8-min
+IMG_TAG = 15.5.1
 
 image:
 	sudo bash build.sh $(REPO_NAME) $(IMG_NAME) $(IMG_TAG)
@@ -27,4 +27,6 @@ push:
 
 push-quay:
 	sudo podman login quay.io -u gatblau
+	sudo podman tag quay.io/$(REPO_NAME)/$(IMG_NAME):$(IMG_TAG) quay.io/$(REPO_NAME)/$(IMG_NAME):latest
 	sudo podman push quay.io/$(REPO_NAME)/$(IMG_NAME):$(IMG_TAG)
+	sudo podman push quay.io/$(REPO_NAME)/$(IMG_NAME):latest

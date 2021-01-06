@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# base-images - Copyright (c) 2019 by www.gatblau.org
+# base-images - Copyright (c) 2019-2021 by www.gatblau.org
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -32,10 +32,11 @@ IMG_NAME=$2
 IMG_TAG=$3
 
 LANG=en_GB.UTF-8
-NODE_HOME=/usr/node/14.15.1
+NODE_HOME=/usr/node/15.5.1
 #NODE_URL=https://nodejs.org/dist/v12.11.0/node-v12.11.0-linux-x64.tar.xz
-NODE_URL=https://nodejs.org/dist/v14.15.1/node-v14.15.1-linux-x64.tar.xz
-NODE_VERSION=14.15.1
+#NODE_URL=https://nodejs.org/dist/v14.15.1/node-v14.15.1-linux-x64.tar.xz
+NODE_URL=https://nodejs.org/dist/v15.5.1/node-v15.5.1-linux-x64.tar.xz
+NODE_VERSION=15.5.1
 
 # pull the latest base image
 buildah pull registry.access.redhat.com/ubi8/ubi-minimal
