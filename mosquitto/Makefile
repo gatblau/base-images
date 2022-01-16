@@ -14,7 +14,7 @@
 #
 REPO_NAME=gatblau
 IMG_NAME=mosquitto
-IMG_TAG = 1.6.10-1 # mosquitto version
+IMG_TAG = 1.6.15-1 # mosquitto version
 
 run:
 	docker run --name oxmsg -it -d -p 1883:1883 -e ALLOW_ANONYMOUS=false $(REPO_NAME)/$(IMG_NAME):$(IMG_TAG)
